@@ -261,7 +261,7 @@ export default function Templates() {
             <label className="block text-sm font-medium text-slate-300 mb-2">
               Message Content
               <span className="text-xs text-slate-400 ml-2">
-                Use {{`variableName`}} for dynamic content
+                Use {`{{variableName}}`} for dynamic content
               </span>
             </label>
             <textarea

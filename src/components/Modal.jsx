@@ -12,18 +12,18 @@ export default function Modal({ isOpen, onClose, title, children, size = 'md' })
   }
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto">
+    <div className="fixed inset-0 z-50 overflow-y-auto animate-fade-in">
       <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
         <div className="fixed inset-0 transition-opacity" aria-hidden="true">
-          <div className="absolute inset-0 bg-black opacity-75" onClick={onClose}></div>
+          <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose}></div>
         </div>
 
-        <div className={`inline-block align-bottom bg-slate-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle w-full ${sizeClasses[size]}`}>
-          <div className="px-6 py-4 border-b border-slate-700 flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-white">{title}</h3>
+        <div className={`inline-block align-bottom bg-slate-800 rounded-xl text-left overflow-hidden shadow-2xl transform transition-all duration-300 animate-scale-in sm:my-8 sm:align-middle w-full border border-slate-600 ${sizeClasses[size]}`}>
+          <div className="px-6 py-4 border-b border-slate-700/50 flex items-center justify-between bg-gradient-to-r from-transparent to-slate-700/10">
+            <h3 className="text-lg font-semibold text-white tracking-tight">{title}</h3>
             <button
               onClick={onClose}
-              className="text-slate-400 hover:text-white transition-base"
+              className="text-slate-400 hover:text-white hover:bg-slate-700 p-1 rounded-lg transition-all duration-200"
             >
               <X className="h-5 w-5" />
             </button>
