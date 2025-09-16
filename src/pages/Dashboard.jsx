@@ -83,18 +83,26 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat, index) => {
           const Icon = stat.icon
+          const isPositive = stat.change.startsWith('+')
           return (
-            <Card key={index} className="relative overflow-hidden">
+            <Card key={index} variant="elevated" className="relative overflow-hidden hover:scale-105 transition-transform duration-300">
               <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-slate-400 text-sm">{stat.title}</p>
-                  <p className="text-2xl font-bold text-white mt-1">{stat.value}</p>
-                  <p className="text-green-400 text-sm mt-1">{stat.change} from last month</p>
+                <div className="flex-1">
+                  <p className="text-slate-400 text-sm font-medium uppercase tracking-wider">{stat.title}</p>
+                  <p className="text-3xl font-bold text-white mt-2 mb-1">{stat.value}</p>
+                  <div className="flex items-center space-x-1">
+                    <div className={`w-2 h-2 rounded-full ${isPositive ? 'bg-green-400' : 'bg-red-400'}`}></div>
+                    <p className={`text-sm font-medium ${isPositive ? 'text-green-400' : 'text-red-400'}`}>
+                      {stat.change} from last month
+                    </p>
+                  </div>
                 </div>
-                <div className={`p-3 rounded-lg bg-slate-700 ${stat.color}`}>
-                  <Icon className="h-6 w-6" />
+                <div className={`p-4 rounded-xl bg-gradient-to-br from-slate-700 to-slate-600 ${stat.color} shadow-lg`}>
+                  <Icon className="h-7 w-7" />
                 </div>
               </div>
+              {/* Subtle gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-slate-700/5 pointer-events-none"></div>
             </Card>
           )
         })}
@@ -150,22 +158,31 @@ export default function Dashboard() {
       </div>
 
       {/* Quick Actions */}
-      <Card title="Quick Actions">
+      <Card title="Quick Actions" variant="accent">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <button className="p-4 bg-slate-700 rounded-lg hover:bg-slate-600 transition-base text-left">
-            <MessageSquare className="h-6 w-6 text-primary mb-2" />
-            <h4 className="font-medium text-white">Create Campaign</h4>
-            <p className="text-sm text-slate-400">Send a new message to your contacts</p>
+          <button className="group p-6 bg-gradient-to-br from-slate-700 to-slate-800 rounded-xl hover:from-slate-600 hover:to-slate-700 transition-all duration-300 text-left border border-slate-600 hover:border-slate-500 hover:scale-105 hover:shadow-lg">
+            <div className="flex items-center justify-between mb-3">
+              <MessageSquare className="h-8 w-8 text-primary group-hover:scale-110 transition-transform duration-300" />
+              <div className="w-2 h-2 bg-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            </div>
+            <h4 className="font-semibold text-white mb-1">Create Campaign</h4>
+            <p className="text-sm text-slate-400 group-hover:text-slate-300 transition-colors">Send a new message to your contacts</p>
           </button>
-          <button className="p-4 bg-slate-700 rounded-lg hover:bg-slate-600 transition-base text-left">
-            <Users className="h-6 w-6 text-green-400 mb-2" />
-            <h4 className="font-medium text-white">Import Contacts</h4>
-            <p className="text-sm text-slate-400">Add new contacts from CSV</p>
+          <button className="group p-6 bg-gradient-to-br from-slate-700 to-slate-800 rounded-xl hover:from-slate-600 hover:to-slate-700 transition-all duration-300 text-left border border-slate-600 hover:border-slate-500 hover:scale-105 hover:shadow-lg">
+            <div className="flex items-center justify-between mb-3">
+              <Users className="h-8 w-8 text-green-400 group-hover:scale-110 transition-transform duration-300" />
+              <div className="w-2 h-2 bg-green-400 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            </div>
+            <h4 className="font-semibold text-white mb-1">Import Contacts</h4>
+            <p className="text-sm text-slate-400 group-hover:text-slate-300 transition-colors">Add new contacts from CSV</p>
           </button>
-          <button className="p-4 bg-slate-700 rounded-lg hover:bg-slate-600 transition-base text-left">
-            <Calendar className="h-6 w-6 text-purple-400 mb-2" />
-            <h4 className="font-medium text-white">Schedule Message</h4>
-            <p className="text-sm text-slate-400">Set up automated reminders</p>
+          <button className="group p-6 bg-gradient-to-br from-slate-700 to-slate-800 rounded-xl hover:from-slate-600 hover:to-slate-700 transition-all duration-300 text-left border border-slate-600 hover:border-slate-500 hover:scale-105 hover:shadow-lg">
+            <div className="flex items-center justify-between mb-3">
+              <Calendar className="h-8 w-8 text-purple-400 group-hover:scale-110 transition-transform duration-300" />
+              <div className="w-2 h-2 bg-purple-400 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            </div>
+            <h4 className="font-semibold text-white mb-1">Schedule Message</h4>
+            <p className="text-sm text-slate-400 group-hover:text-slate-300 transition-colors">Set up automated reminders</p>
           </button>
         </div>
       </Card>

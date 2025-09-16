@@ -173,7 +173,7 @@ export default function Campaigns() {
       <Card>
         <div className="space-y-4">
           {campaigns.map((campaign) => (
-            <div key={campaign.id} className="p-4 bg-slate-700 rounded-lg border border-slate-600">
+            <div key={campaign.id} className="p-6 bg-gradient-to-br from-slate-700 to-slate-800 rounded-xl border border-slate-600 hover:border-slate-500 transition-all duration-300 hover:shadow-lg hover:scale-[1.02]">
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="flex items-center space-x-3 mb-2">

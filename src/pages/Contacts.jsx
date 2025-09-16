@@ -3,7 +3,9 @@ import Card from '../components/Card'
 import Button from '../components/Button'
 import Input from '../components/Input'
 import Modal from '../components/Modal'
-import { Plus, Search, Filter, Upload, Edit, Trash2, Phone, Mail, Tag } from 'lucide-react'
+import ConfirmDialog from '../components/ConfirmDialog'
+import EmptyState from '../components/EmptyState'
+import { Plus, Search, Filter, Upload, Edit, Trash2, Phone, Mail, Tag, Users } from 'lucide-react'
 
 export default function Contacts() {
   const [contacts, setContacts] = useState([
@@ -53,6 +55,9 @@ export default function Contacts() {
   const [editingContact, setEditingContact] = useState(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedSegment, setSelectedSegment] = useState('all')
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false)
+  const [contactToDelete, setContactToDelete] = useState(null)
+  const [isDeleting, setIsDeleting] = useState(false)
 
   const [newContact, setNewContact] = useState({
     firstName: '',
@@ -95,8 +100,19 @@ export default function Contacts() {
     setIsAddModalOpen(false)
   }
 
-  const handleDeleteContact = (id) => {
-    setContacts(contacts.filter(c => c.id !== id))
+  const handleDeleteContact = (contact) => {
+    setContactToDelete(contact)
+    setDeleteConfirmOpen(true)
+  }
+
+  const confirmDeleteContact = async () => {
+    setIsDeleting(true)
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    setContacts(contacts.filter(c => c.id !== contactToDelete.id))
+    setDeleteConfirmOpen(false)
+    setContactToDelete(null)
+    setIsDeleting(false)
   }
 
   const stats = [
@@ -166,78 +182,93 @@ export default function Contacts() {
 
       {/* Contacts Table */}
       <Card>
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-slate-700">
-                <th className="text-left py-3 px-4 text-slate-300 font-medium">Name</th>
-                <th className="text-left py-3 px-4 text-slate-300 font-medium">Contact</th>
-                <th className="text-left py-3 px-4 text-slate-300 font-medium">Segments</th>
-                <th className="text-left py-3 px-4 text-slate-300 font-medium">Status</th>
-                <th className="text-left py-3 px-4 text-slate-300 font-medium">Last Contact</th>
-                <th className="text-left py-3 px-4 text-slate-300 font-medium">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredContacts.map((contact) => (
-                <tr key={contact.id} className="border-b border-slate-700 hover:bg-slate-700">
-                  <td className="py-3 px-4">
-                    <div className="text-white font-medium">{contact.firstName} {contact.lastName}</div>
-                  </td>
-                  <td className="py-3 px-4">
-                    <div className="space-y-1">
-                      <div className="flex items-center text-slate-300 text-sm">
-                        <Phone className="h-3 w-3 mr-2" />
-                        {contact.phoneNumber}
-                      </div>
-                      <div className="flex items-center text-slate-300 text-sm">
-                        <Mail className="h-3 w-3 mr-2" />
-                        {contact.email}
-                      </div>
-                    </div>
-                  </td>
-                  <td className="py-3 px-4">
-                    <div className="flex flex-wrap gap-1">
-                      {contact.segments.map((segment) => (
-                        <span key={segment} className="px-2 py-1 bg-slate-600 text-slate-300 text-xs rounded-full">
-                          {segment}
-                        </span>
-                      ))}
-                    </div>
-                  </td>
-                  <td className="py-3 px-4">
-                    <span className={`px-2 py-1 text-xs rounded-full ${
-                      contact.optInStatus === 'opted-in' 
-                        ? 'bg-green-900 text-green-300' 
-                        : 'bg-red-900 text-red-300'
-                    }`}>
-                      {contact.optInStatus}
-                    </span>
-                  </td>
-                  <td className="py-3 px-4 text-slate-300 text-sm">
-                    {contact.lastContact}
-                  </td>
-                  <td className="py-3 px-4">
-                    <div className="flex space-x-2">
-                      <button
-                        onClick={() => handleEditContact(contact)}
-                        className="p-1 text-slate-400 hover:text-white transition-base"
-                      >
-                        <Edit className="h-4 w-4" />
-                      </button>
-                      <button
-                        onClick={() => handleDeleteContact(contact.id)}
-                        className="p-1 text-slate-400 hover:text-red-400 transition-base"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                    </div>
-                  </td>
+        {filteredContacts.length === 0 ? (
+          <EmptyState
+            icon={Users}
+            title="No contacts found"
+            description={searchTerm || selectedSegment !== 'all' 
+              ? "No contacts match your current filters. Try adjusting your search criteria."
+              : "Get started by adding your first contact or importing from CSV."
+            }
+            actionText={searchTerm || selectedSegment !== 'all' ? null : "Add Contact"}
+            onAction={searchTerm || selectedSegment !== 'all' ? null : () => setIsAddModalOpen(true)}
+          />
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-slate-700">
+                  <th className="text-left py-4 px-4 text-slate-300 font-semibold">Name</th>
+                  <th className="text-left py-4 px-4 text-slate-300 font-semibold">Contact</th>
+                  <th className="text-left py-4 px-4 text-slate-300 font-semibold">Segments</th>
+                  <th className="text-left py-4 px-4 text-slate-300 font-semibold">Status</th>
+                  <th className="text-left py-4 px-4 text-slate-300 font-semibold">Last Contact</th>
+                  <th className="text-left py-4 px-4 text-slate-300 font-semibold">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {filteredContacts.map((contact) => (
+                  <tr key={contact.id} className="border-b border-slate-700 hover:bg-slate-700/50 transition-colors">
+                    <td className="py-4 px-4">
+                      <div className="text-white font-medium">{contact.firstName} {contact.lastName}</div>
+                    </td>
+                    <td className="py-4 px-4">
+                      <div className="space-y-1">
+                        <div className="flex items-center text-slate-300 text-sm">
+                          <Phone className="h-3 w-3 mr-2 text-slate-400" />
+                          {contact.phoneNumber}
+                        </div>
+                        <div className="flex items-center text-slate-300 text-sm">
+                          <Mail className="h-3 w-3 mr-2 text-slate-400" />
+                          {contact.email}
+                        </div>
+                      </div>
+                    </td>
+                    <td className="py-4 px-4">
+                      <div className="flex flex-wrap gap-1">
+                        {contact.segments.map((segment) => (
+                          <span key={segment} className="px-2 py-1 bg-slate-600 text-slate-300 text-xs rounded-full border border-slate-500">
+                            {segment}
+                          </span>
+                        ))}
+                      </div>
+                    </td>
+                    <td className="py-4 px-4">
+                      <span className={`px-3 py-1 text-xs rounded-full font-medium ${
+                        contact.optInStatus === 'opted-in' 
+                          ? 'bg-green-900/50 text-green-300 border border-green-700' 
+                          : 'bg-red-900/50 text-red-300 border border-red-700'
+                      }`}>
+                        {contact.optInStatus}
+                      </span>
+                    </td>
+                    <td className="py-4 px-4 text-slate-300 text-sm">
+                      {contact.lastContact}
+                    </td>
+                    <td className="py-4 px-4">
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={() => handleEditContact(contact)}
+                          className="p-2 text-slate-400 hover:text-white hover:bg-slate-600 rounded-lg transition-all"
+                          title="Edit contact"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteContact(contact)}
+                          className="p-2 text-slate-400 hover:text-red-400 hover:bg-red-900/20 rounded-lg transition-all"
+                          title="Delete contact"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </Card>
 
       {/* Add/Edit Contact Modal */}
@@ -321,6 +352,19 @@ export default function Contacts() {
           </div>
         </div>
       </Modal>
+
+      {/* Delete Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={deleteConfirmOpen}
+        onClose={() => setDeleteConfirmOpen(false)}
+        onConfirm={confirmDeleteContact}
+        title="Delete Contact"
+        message={`Are you sure you want to delete ${contactToDelete?.firstName} ${contactToDelete?.lastName}? This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="danger"
+        loading={isDeleting}
+      />
     </div>
   )
 }
