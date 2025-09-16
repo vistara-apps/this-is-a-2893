@@ -285,7 +285,7 @@ export default function Campaigns() {
             <label className="block text-sm font-medium text-slate-300 mb-2">
               Message Content
               <span className="text-xs text-slate-400 ml-2">
-                Use {{`firstName`}}, {{`lastName`}}, {{`serviceType`}}, {{`time`}} for personalization
+                Use {`{{firstName}}`}, {`{{lastName}}`}, {`{{serviceType}}`}, {`{{time}}`} for personalization
               </span>
             </label>
             <textarea
